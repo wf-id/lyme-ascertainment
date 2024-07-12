@@ -87,7 +87,7 @@ fit <- brm(value ~ -1 + s(MonthNBR, bs = "cc", k = 12) + (1|CaseDefinitionDSC) +
            family = poisson(), prior = prior1,
            backend = "cmdstanr",
            save_model = here("output", "usamodel"),
-           iter = 4000,
+           iter = 8000,
            control  = list(max_treedepth = 15, adapt_delta = .99))
 fit
 
@@ -114,7 +114,7 @@ usa_loo_results$diffs |>
 as.data.frame()  |>
 rownames_to_column() |>
 #setNames(c("Model","ELPD Difference", "Standard Error of Difference", "LOO", "LOO (SE)")) |>
-flextable::flextable()
+flextable::flextable() |>
 flextable::save_as_docx(path = "usa-loo-fit.docx")
 
 readr::write_rds(usa_loo_results, here::here("output", "loo-usa-results.rds"))
