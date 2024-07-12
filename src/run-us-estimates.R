@@ -86,8 +86,10 @@ fit <- brm(value ~ -1 + s(MonthNBR, bs = "cc", k = 12) + (1|CaseDefinitionDSC) +
            data = dat_us_long[YearNBR<2020],
            family = poisson(), prior = prior1,
            backend = "cmdstanr",
-           save_model = here("output", "usamodel"), 
-           control  = list(max_treedepth = 13))
+           save_model = here("output", "usamodel"),
+           iter = 4000,
+           control  = list(max_treedepth = 15, adapt_delta = .99))
+fit
 
 fitnb <- brm(value ~ -1 + s(MonthNBR, bs = "cc", k = 12) + (1|CaseDefinitionDSC)+ offset(PopLog),
            data = dat_us_long[YearNBR<2020],
@@ -95,7 +97,7 @@ fitnb <- brm(value ~ -1 + s(MonthNBR, bs = "cc", k = 12) + (1|CaseDefinitionDSC)
            backend = "cmdstanr",
            save_model = here("output", "usamodel"), 
            control  = list(max_treedepth = 13))
-
+fitnb
 
 # Save models ------------------------------------------
 
@@ -104,8 +106,16 @@ readr::write_rds(fitnb, here::here("output", "model-usa-negbinom.rds"))
 
 # Determine which model is superior ------------------------------------------
 loo::loo(fit, fitnb)
+as.data.frame()
 
 usa_loo_results <- loo::loo(fit, fitnb)
+
+usa_loo_results$diffs |>
+as.data.frame()  |>
+rownames_to_column() |>
+#setNames(c("Model","ELPD Difference", "Standard Error of Difference", "LOO", "LOO (SE)")) |>
+flextable::flextable()
+flextable::save_as_docx(path = "usa-loo-fit.docx")
 
 readr::write_rds(usa_loo_results, here::here("output", "loo-usa-results.rds"))
 
@@ -124,7 +134,8 @@ save_figure(p_usa_smooths, "figure-us-cases-smooths")
 
 
 
-summary(fitnb)
+summary(fitnb) |>
+gtsummary::tbl_regression()
 
 post_samps = posterior_epred(fitnb, dat_us_long)
 
