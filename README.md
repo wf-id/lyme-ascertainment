@@ -1,6 +1,6 @@
-# lyme-ascertainment
+# Lyme case Ascertainment Code and Data
 
-This repository support the analysis in *Estimated under-ascertainment of Lyme Disease during the COVID-19 pandemic in the United States and North Carolina* by Jones et al.
+This repository support the analysis in *Lyme Disease under-ascertainment during the COVID-19 pandemic in the United States and North Carolina: a retrospective analysis* by Jones et al.
 
 ## Data Sources
 
